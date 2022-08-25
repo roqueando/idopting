@@ -4,15 +4,10 @@ defmodule Checkout do
   """
 
   @doc """
-  Hello world.
-
-  ## Examples
-
-      iex> Checkout.hello()
-      :world
+  Calculates a fucking long process to simulate a payment process
 
   """
-  def hello do
-    :world
+  def buy(product_id, quantity \\ 1) do
+    # Must do a fibonacci sequence and 
   end
 end

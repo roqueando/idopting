@@ -2,11 +2,24 @@ defmodule Products.Worker do
   @moduledoc """
   Documentation for `Products.Worker`.
   """
-  use GenServer
+  @main_cookie :password
+
+  use Agent
 
   def start_link(opts) do
     Node.start(:products)
-    GenServer.start_link(__MODULE__, opts)
+    Node.set_cookie(@main_cookie)
+
+    Agent.start_link(
+      fn ->
+        [
+          %{id: 1, title: "Book: Neovim is awesooome", price: 14.90, quantity: 10},
+          %{id: 2, title: "Book: Agile with Pigor", price: 14.90, quantity: 10},
+          %{id: 3, title: "Mechanical keyboard", price: 14.90, quantity: 10}
+        ]
+      end,
+      opts
+    )
   end
 
   def init(_) do
@@ -17,10 +30,22 @@ defmodule Products.Worker do
   Return all products
   """
   def list do
-    [
-      %{title: "Book: Neovim is awesooome", price: 14.90, quantity: 10},
-      %{title: "Book: Agile with Pigor", price: 14.90, quantity: 10},
-      %{title: "Mechanical keyboard", price: 14.90, quantity: 10}
-    ]
+    Agent.get(__MODULE__, fn state -> state end)
+  end
+
+  def remove_from_stock(id, quantity \\ 1) do
+    Agent.update(__MODULE__, fn state ->
+      Enum.map(state, &update_product(&1, id, quantity))
+    end)
+  end
+
+  defp update_product(element, id, quantity) do
+    if element.id == id do
+      Map.put(
+        element,
+        :quantity,
+        if(element.quantity == 0, do: 0, else: element.quantity - quantity)
+      )
+    end
   end
 end

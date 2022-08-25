@@ -4,6 +4,7 @@ defmodule Main do
   Here will be only interfaces function like: show products, buy products
   """
   @products_worker :"products@MacBook-Air-de-Ayaworan.local"
+  @checkout_worker :"checkout@MacBook-Air-de-Ayaworan.local"
 
   def child_spec(args) do
     %{
@@ -12,9 +13,13 @@ defmodule Main do
     }
   end
 
-  def start_link(_args) do
+  def start_link(args) do
     Node.start(:main)
+    Node.set_cookie(:password)
+    GenServer.start_link(__MODULE__, args)
   end
+
+  def init(_), do: {:ok, []}
 
   @doc """
   Calls product worker `list/0` and return all products.
@@ -26,6 +31,22 @@ defmodule Main do
 
       products ->
         products
+    end
+  end
+
+  @doc """
+  Calls checkout worker `buy/2` and return the bought product.
+  """
+  def buy_product(id, quantity \\ 1) do
+    case :rpc.call(@checkout_worker, :"Elixir.Checkout.Worker", :buy, [id, quantity]) do
+      {:badrpc, :nodedown} ->
+        {:error, "node not found"}
+
+      {:error, :out_of_stock} ->
+        {:error, "Out of Stoc"}
+
+      {:ok, product, quantity} ->
+        {:ok, "#{quantity}x of #{product} bought successfully"}
     end
   end
 end
