@@ -33,10 +33,18 @@ defmodule Products.Worker do
     Agent.get(__MODULE__, fn state -> state end)
   end
 
+  defp get_one(id) do
+    Agent.get(__MODULE__, fn state -> Enum.find(state, fn product -> product.id == id end) end)
+  end
+
   def remove_from_stock(id, quantity \\ 1) do
     Agent.update(__MODULE__, fn state ->
       Enum.map(state, &update_product(&1, id, quantity))
     end)
+
+    product = get_one(id)
+
+    {:ok, product.title, quantity}
   end
 
   defp update_product(element, id, quantity) do
@@ -46,6 +54,8 @@ defmodule Products.Worker do
         :quantity,
         if(element.quantity == 0, do: 0, else: element.quantity - quantity)
       )
+    else
+      element
     end
   end
 end

@@ -38,12 +38,12 @@ defmodule Main do
   Calls checkout worker `buy/2` and return the bought product.
   """
   def buy_product(id, quantity \\ 1) do
-    case :rpc.call(@checkout_worker, :"Elixir.Checkout.Worker", :buy, [id, quantity]) do
+    case :rpc.call(@checkout_worker, :"Elixir.Checkout", :buy, [id, quantity]) do
       {:badrpc, :nodedown} ->
         {:error, "node not found"}
 
       {:error, :out_of_stock} ->
-        {:error, "Out of Stoc"}
+        {:error, "Out of Stock"}
 
       {:ok, product, quantity} ->
         {:ok, "#{quantity}x of #{product} bought successfully"}
