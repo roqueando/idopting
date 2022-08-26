@@ -28,7 +28,7 @@ defmodule Checkout do
          _result <- fibonacci(43) do
       {:ok, success_message}
     else
-      {:error, :out_of_stock} -> {:error, :out_of_stock}
+      {:error, :out_of_stock} -> IO.puts("Out of stock")
     end
   end
 

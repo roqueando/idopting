@@ -44,7 +44,13 @@ defmodule Products.Worker do
 
     product = get_one(id)
 
-    {:ok, product.title, quantity}
+    case product.quantity do
+      0 ->
+        {:error, :out_of_stock}
+
+      _ ->
+        {:ok, product.title, quantity}
+    end
   end
 
   defp update_product(element, id, quantity) do
