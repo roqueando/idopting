@@ -7,7 +7,6 @@ defmodule Products.Worker do
   use Agent
 
   def start_link(opts) do
-    Node.start(:products)
     Node.set_cookie(@main_cookie)
 
     Agent.start_link(

@@ -12,7 +12,6 @@ defmodule Checkout do
   end
 
   def start_link(args) do
-    Node.start(:checkout)
     Node.set_cookie(:password)
     GenServer.start_link(__MODULE__, args)
   end
@@ -26,6 +25,7 @@ defmodule Checkout do
   def buy(product_id, quantity \\ 1) do
     with {:ok, success_message} <- discount_product_stock(product_id, quantity),
          _result <- fibonacci(43) do
+      IO.puts(success_message)
       {:ok, success_message}
     else
       {:error, :out_of_stock} -> IO.puts("Out of stock")
