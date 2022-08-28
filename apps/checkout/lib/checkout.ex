@@ -2,7 +2,7 @@ defmodule Checkout do
   @moduledoc """
   Documentation for `Checkout`.
   """
-  @products_worker :"products@MacBook-Air-de-Ayaworan.local"
+  @products_worker :"idopting-products@fdaa:0:8cd8:a7b:1f61:5d29:4a:2"
 
   def child_spec(args) do
     %{

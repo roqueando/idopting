@@ -3,8 +3,8 @@ defmodule Main do
   Documentation for `Main`.
   Here will be only interfaces function like: show products, buy products
   """
-  @products_worker :"products@MacBook-Air-de-Ayaworan.local"
-  @checkout_worker :"checkout@MacBook-Air-de-Ayaworan.local"
+  @products_worker :"idopting-products@fdaa:0:8cd8:a7b:1f61:5d29:4a:2"
+  @checkout_worker :"idopting-checkout@fdaa:0:8cd8:a7b:1f60:2f6a:c1cd:2"
 
   def child_spec(args) do
     %{
@@ -14,8 +14,7 @@ defmodule Main do
   end
 
   def start_link(args) do
-    Node.start(:main)
-    Node.set_cookie(:password)
+    #Node.set_cookie(:password)
     GenServer.start_link(__MODULE__, args)
   end
 
@@ -41,4 +40,7 @@ defmodule Main do
     :rpc.cast(@checkout_worker, :"Elixir.Checkout", :buy, [id, quantity])
     IO.puts("Processing your payment")
   end
+
+  def product_worker, do: @products_worker
+  def checkout_worker, do: @checkout_worker
 end

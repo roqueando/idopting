@@ -2,12 +2,11 @@ defmodule Products.Worker do
   @moduledoc """
   Documentation for `Products.Worker`.
   """
-  @main_cookie :password
 
   use Agent
 
   def start_link(opts) do
-    Node.set_cookie(@main_cookie)
+    Node.set_cookie(:password)
 
     Agent.start_link(
       fn ->
@@ -32,10 +31,16 @@ defmodule Products.Worker do
     Agent.get(__MODULE__, fn state -> state end)
   end
 
+  @doc """
+  Get one product by id
+  """
   defp get_one(id) do
     Agent.get(__MODULE__, fn state -> Enum.find(state, fn product -> product.id == id end) end)
   end
 
+  @doc """
+  Remove a product from stock
+  """
   def remove_from_stock(id, quantity \\ 1) do
     Agent.update(__MODULE__, fn state ->
       Enum.map(state, &update_product(&1, id, quantity))
